@@ -497,6 +497,28 @@
     </div>
 
     <script>
+        // මෙය ඔබේ පැරණි downloadCardAsImage ශ්‍රිතය වෙනුවට දාන්න
+async function downloadCardAsImage() {
+    const card = document.getElementById('vesakCard');
+    
+    // පින්තූරය ඩවුන්ලෝඩ් කිරීමට පෙර කාඩ් එකේ ඇති දත්ත පරීක්ෂා කිරීම
+    try {
+        const canvas = await html2canvas(card, {
+            scale: 3, // ගුණාත්මක බව වැඩි කිරීමට
+            useCORS: true,
+            backgroundColor: null
+        });
+        
+        // පින්තූරය ඩවුන්ලෝඩ් කිරීම
+        const link = document.createElement('a');
+        link.download = 'Vesak_Card.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    } catch (error) {
+        console.error("Error:", error);
+        alert("පින්තූරය ලබාගැනීමේදී දෝෂයක් සිදු විය.");
+    }
+}
         let selectedImageUrl = "kudu1.png";
 
         function selectImage(element, imgUrl) {
