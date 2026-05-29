@@ -500,116 +500,59 @@
         let selectedImageUrl = "kudu1.png";
 
         function selectImage(element, imgUrl) {
-            const options = document.querySelectorAll('.image-option');
-            options.forEach(opt => opt.classList.remove('selected'));
+            // සියලුම images වල 'selected' class එක ඉවත් කිරීම
+            document.querySelectorAll('.image-option').forEach(opt => opt.classList.remove('selected'));
             
+            // ක්ලික් කළ image එකට class එක එකතු කිරීම
             element.classList.add('selected');
+            
+            // radio button එක check කිරීම
             element.querySelector('input[type="radio"]').checked = true;
             
             selectedImageUrl = imgUrl;
+            
+            // කාඩ් එක update කිරීම
             updateCard();
         }
 
         function updateCard() {
+            // Text Inputs
             const receiver = document.getElementById('txtReceiver').value;
             const name = document.getElementById('txtName').value;
+            
+            // Styles & Elements
             const bg = document.getElementById('cmbBg').value;
             const fontStyle = document.getElementById('cmbFont').value;
             const wish = document.getElementById('cmbWishes').value;
             const card = document.getElementById('vesakCard');
 
+            // 1. පසුබිම වෙනස් කිරීම
             card.style.background = bg;
             
+            // 2. ශීර්ෂ පාඨය සහ ෆොන්ට් එක වෙනස් කිරීම
             const cardTitle = document.getElementById('cardTitle');
             cardTitle.innerText = wish;
             cardTitle.style.fontFamily = fontStyle;
             
-            document.getElementById('cardLanternImg').src = selectedImageUrl;
+            // 3. පින්තූරය වෙනස් කිරීම (අලුතින් src එක assign කිරීම)
+            const lanternImg = document.getElementById('cardLanternImg');
+            lanternImg.src = selectedImageUrl;
 
-            // To (කා හටද) කොටස
+            // 4. Receiver හා Sender පෙළ වෙනස් කිරීම
             const cardReceiver = document.getElementById('cardReceiver');
-            cardReceiver.style.fontFamily = fontStyle;
-            if(receiver.trim() !== "") {
-                cardReceiver.innerText = "ආදරණීය " + receiver + " වෙත,";
-            } else {
-                cardReceiver.innerText = "ආදරණීය ඔබ වෙත,";
-            }
-
-            // From (කා විසින්ද) කොටස
             const cardSender = document.getElementById('cardSender');
+            
+            cardReceiver.style.fontFamily = fontStyle;
             cardSender.style.fontFamily = fontStyle;
-            if(name.trim() !== "") {
-                cardSender.innerText = "සුබ පතන්නේ: " + name;
-            } else {
-                cardSender.innerText = "සුබ පතන්නේ: ඔබේ නම";
-            }
+
+            cardReceiver.innerText = receiver.trim() !== "" ? "ආදරණීය " + receiver + " වෙත," : "ආදරණීය ඔබ වෙත,";
+            cardSender.innerText = name.trim() !== "" ? "සුබ පතන්නේ: " + name : "සුබ පතන්නේ: ඔබේ නම";
         }
 
-        async function downloadCardAsImage() {
-    const card = document.getElementById('vesakCard'); // ඔබේ කාඩ් එකේ ID එක මෙතනට දෙන්න
-
-    // 1. අකුරු (Fonts) සම්පූර්ණයෙන් Load වනතුරු බලා සිටින්න
-    await document.fonts.ready; 
-
-    // 2. පින්තූරය සාදන්න
-    html2canvas(card, { 
-        scale: 2,           // පින්තූරයේ ගුණාත්මක බව වැඩි කරයි
-        useCORS: true,      // පින්තූර බාහිරින් තිබේ නම් එයට ඉඩ දේ
-        allowTaint: false,  
-        backgroundColor: null 
-    }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        
-        // පින්තූරය බාගත කිරීම (Download)
-        const link = document.createElement('a');
-        link.href = imgData;
-        link.download = 'Vesak_Card.png';
-        link.click();
-    });
-}
-            
-            // 🛠️ html2canvas මඟින් Image එකක් generate කරන විට animation එක නිසා ඇද වීම වැළැක්වීමට තාවකාලිකව animation නවත්වනු ලැබේ.
-            mainImg.style.animation = 'none';
-            leftL.style.animation = 'none';
-            rightL.style.animation = 'none';
-            
-            // html2canvas වැඩ නිම කිරීමට මිලි තත්පර කිහිපයක් ලබා දීම
-            setTimeout(() => {
-                html2canvas(card, { 
-                    scale: 2,
-                    useCORS: true, 
-                    allowTaint: false,
-                    backgroundColor: null,
-                    logging: false
-                }).then(canvas => {
-                    const imgData = canvas.toDataURL('image/png');
-                    
-                    // Mobile Display
-                    document.getElementById('popupImg').src = imgData;
-                    document.getElementById('popupOverlay').style.display = 'flex';
-                    
-                    // PC Download trigger
-                    const link = document.createElement('a');
-                    link.href = imgData;
-                    link.download = 'Premium_Vesak_Card.png';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                    // 🛠️ Image එක සාදා නිම වූ පසු නැවත Animation සක්‍රීය කිරීම
-                    mainImg.style.animation = 'float 4s ease-in-out infinite';
-                    leftL.style.animation = 'swayLeft 4.5s ease-in-out infinite alternate';
-                    rightL.style.animation = 'swayRight 5s ease-in-out infinite alternate';
-                });
-            }, 50);
-        }
-
-        function closePopup() {
-            document.getElementById('popupOverlay').style.display = 'none';
-        }
-        
-        // Initial setup execution
+        // පිටුව පටන් ගන්නා විට වරක් ක්‍රියාත්මක වේ
         updateCard();
+        
+        // ... (downloadCardAsImage සහ අනිත් function ටික මෙතන තියෙන්න දෙන්න)
     </script>
     <footer style="text-align: center; color: #a291b8; font-size: 13px; margin-top: 40px; padding: 20px; font-family: sans-serif; border-top: 1px solid rgba(255,255,255,0.1);">
         <p>&copy; 2026 Copyright Dishani Murage. All Rights Reserved</p>
