@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>මොබයිල්-ෆ්‍රෙන්ඩ්ලි වෙසක් කාඩ් නිර්මාණකරු</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@500;700&family=Gemunu+Libre:wght@400;600&family=Noto+Sans+Sinhala:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --primary-gold: #ffdf00;
+            --accent-gold: #d4af37;
+            --bg-dark: #0a0214;
+            --card-overlay: rgba(20, 10, 35, 0.7);
+            --font-main: 'Noto Sans Sinhala', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 20%, #1d0836 0%, var(--bg-dark) 80%);
+            color: #f5f5f7;
+            margin: 0;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        h1 {
+            color: var(--primary-gold);
+            text-shadow: 0 0 20px rgba(255, 223, 0, 0.3);
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+            margin: 10px 0 8px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a291b8;
+            font-size: 14px;
+            margin: 0 0 25px 0;
+            padding: 0 15px;
+            font-weight: 300;
+            line-height: 1.5;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* Modern Control Panel */
+        .controls {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 24px;
+            border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #f1e4a0;
+            font-size: 13.5px;
+            letter-spacing: 0.3px;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(10, 5, 18, 0.6);
+            color: #fff;
+            outline: none;
+            font-size: 14.5px;
+            font-family: var(--font-main);
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 10px rgba(255, 223, 0, 0.2);
+            background: rgba(10, 5, 18, 0.8);
+        }
+
+        /* Image Selection Grid */
+        .image-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .image-option {
+            position: relative;
+            cursor: pointer;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            aspect-ratio: 1.15 / 1;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+        }
+
+        .image-option img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .image-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .image-option:hover {
+            border-color: rgba(255, 223, 0, 0.4);
+            background: rgba(255, 223, 0, 0.03);
+        }
+
+        .image-option.selected {
+            border-color: var(--primary-gold);
+            background: rgba(255, 223, 0, 0.08);
+            box-shadow: 0 0 20px rgba(255, 223, 0, 0.25);
+        }
+        
+        .image-option.selected img {
+            transform: scale(1.05);
+        }
+
+        /* Premium Card Preview Area */
+        .preview-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .vesak-card {
+            width: 100%;
+            aspect-ratio: 4 / 5.6;
+            max-width: 380px; 
+            border-radius: 24px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 24px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 223, 0, 0.35);
+        }
+
+        .corner-lantern {
+            position: absolute;
+            top: 0;
+            width: 65px; 
+            height: auto;
+            z-index: 2;
+            transform-origin: top center; 
+            filter: drop-shadow(0 4px 12px rgba(255, 223, 0, 0.4));
+        }
+
+        .lantern-left {
+            left: 10px;
+            animation: swayLeft 4.5s ease-in-out infinite alternate;
+        }
+
+        .lantern-right {
+            right: 10px;
+            animation: swayRight 5s ease-in-out infinite alternate;
+        }
+
+        @keyframes swayLeft {
+            0% { transform: rotate(-6deg); }
+            100% { transform: rotate(6deg); }
+        }
+
+        @keyframes swayRight {
+            0% { transform: rotate(-5deg); }
+            100% { transform: rotate(7deg); }
+        }
+
+        .card-title {
+            font-size: 23px;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.9);
+            line-height: 1.45;
+            width: 100%;
+            z-index: 3; 
+            letter-spacing: 0.3px;
+            padding: 0 40px; 
+            box-sizing: border-box;
+        }
+
+        /* 🛠️ වෙසක් පින්තූරය ලොකුවට පෙන්වීමට වෙනස් කරන ලද කොටස */
+        .card-image-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            z-index: 2;
+            margin: 10px 0;
+            overflow: hidden; /* පින්තූරය Card එකෙන් පිටතට කැපී යාම වැළැක්වීමට */
+        }
+
+        /* 🛠️ පින්තූරයේ උපරිම උස සහ පළල වැඩි කර නිසි ලෙස සකස් කිරීම */
+        .card-lantern-img {
+            width: 100%;          
+            height: 100%;
+            max-height: 280px; /* 220px සිට 280px දක්වා උස වැඩි කරන ලදී */
+            object-fit: contain;
+            filter: drop-shadow(0 0 30px rgba(255, 223, 0, 0.75));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .card-footer-text {
+            width: 100%;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px;
+            border-radius: 16px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-sizing: border-box;
+        }
+
+        .card-receiver {
+            font-size: 14px;
+            color: #e2d9f3;
+            text-shadow: 0 1px 4px #000;
+            text-align: center;
+            width: 100%;
+            font-weight: 300;
+        }
+
+        .card-sender {
+            font-size: 17px;
+            color: var(--primary-gold);
+            text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+            font-weight: 600;
+            text-align: center;
+            width: 100%;
+            letter-spacing: 0.3px;
+        }
+
+        /* Modern Luxury Button */
+        .download-btn {
+            width: 100%;
+            max-width: 380px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #ffb300, #ff6f00);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 15px;
+            font-family: var(--font-main);
+            font-weight: 600;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 111, 0, 0.3);
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .download-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 111, 0, 0.45);
+            transform: translateY(-2px);
+        }
+
+        /* Minimal Popup Overlay */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 2, 10, 0.95);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(8px);
+        }
+
+        .popup-content {
+            background: #140924;
+            padding: 24px;
+            border-radius: 24px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 223, 0, 0.2);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .popup-img {
+            width: 100%;
+            max-height: 60vh;
+            object-fit: contain;
+            border-radius: 16px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .popup-msg {
+            font-size: 13.5px;
+            color: #e2d9f3;
+            margin-bottom: 18px;
+            line-height: 1.5;
+            font-weight: 300;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.06);
+            color: #ff5252;
+            border: 1px solid rgba(255, 82, 82, 0.3);
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: var(--font-main);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                max-width: 950px;
+                align-items: flex-start;
+                gap: 30px;
+            }
+            h1 { font-size: 32px; margin-top: 20px; }
+            .subtitle { font-size: 15px; margin-bottom: 35px; }
+            .controls { flex: 1; padding: 28px; }
+            .preview-area { flex: 1; position: sticky; top: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🏮 වෙසක් කාඩ් පතක් නිර්මාණය කරමු 🏮</h1>
+    <p class="subtitle">විස්තර ඇතුළත් කර, ඔබ කැමති රූපය තෝරාගෙන කාඩ්පත පින්තූරයක් ලෙස ලබාගන්න.</p>
+
+    <div class="container">
+        
+        <div class="controls">
+            <div class="form-group">
+                <label for="txtReceiver">කා හටද සුබ පතන්නේ? (To / Receiver's Name):</label>
+                <input type="text" id="txtReceiver" placeholder="උදා: අම්මා, ෴ාත්තා, යාළුවා..." oninput="updateCard()">
+            </div>
+
+            <div class="form-group">
+                <label for="txtName">කා විසින්ද සුබ පතන්නේ? (From / Sender's Name):</label>
+                <input type="text" id="txtName" placeholder="මෙහි ඔබේ නම ලියන්න..." oninput="updateCard()">
+            </div>
+
+            <div class="form-group">
+                <label for="cmbBg">පසුබිම් වර්ණය (Background Color):</label>
+                <select id="cmbBg" onchange="updateCard()">
+                    <option value="linear-gradient(135deg, #19062a, #07010f)">රාත්‍රී තද දම් පසුබිම</option>
+                    <option value="linear-gradient(135deg, #09171a, #030a0d)">සාගර නිල් පැහැති පසුබිම</option>
+                    <option value="linear-gradient(135deg, #3a0303, #120000)">ශ්‍රද්ධා බරිත තද රතු පසුබිම</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>වෙසක් රූපය තෝරන්න (Tap to Select Image):</label>
+                <div class="image-selector-grid">
+                    <div class="image-option selected" onclick="selectImage(this, 'kudu1.png')">
+                        <input type="radio" name="radLantern" checked>
+                        <img src="kudu1.png" alt="Lantern 1">
+                    </div>
+                    <div class="image-option" onclick="selectImage(this, 'kudu2.png')">
+                        <input type="radio" name="radLantern">
+                        <img src="kudu2.png" alt="Lantern 2">
+                    </div>
+                    <div class="image-option" onclick="selectImage(this, 'kudu3.png')">
+                        <input type="radio" name="radLantern">
+                        <img src="kudu3.png" alt="Lantern 3">
+                    </div>
+                    <div class="image-option" onclick="selectImage(this, 'kudu4.png')">
+                        <input type="radio" name="radLantern">
+                        <img src="kudu4.png" alt="Lantern 4">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cmbFont">අකුරු හැඩය (Font Style):</label>
+                <select id="cmbFont" onchange="updateCard()">
+                    <option value="'Noto Sans Sinhala', sans-serif">Noto Sans (නවීන අකුරු)</option>
+                    <option value="'Abhaya Libre', serif">Abhaya Libre (පාරම්පරික පන්සල් අකුරු)</option>
+                    <option value="'Gemunu Libre', sans-serif">Gemunu Libre (ඝනකම් අකුරු)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="cmbWishes">සුබපැතුම් වැකිය (Wishes):</label>
+                <select id="cmbWishes" onchange="updateCard()">
+                    <option value="ශ්‍රද්ධා බරිත වෙසක් මංගල්‍යයක් වේවා!">ශ්‍රද්ධා බරිත වෙසක් මංගල්‍යයක් වේවා!</option>
+                    <option value="පින්බර වෙසක් උත්සවයක් වේවා!">පින්බර වෙසක් උත්සවයක් වේවා!</option>
+                    <option value="ලොව්තුරු බුදු ගුණ බලයෙන් සාමය සතුට උදාවේවා!">බුදු ගුණ බලයෙන් සාමය සතුට උදාවේවා!</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="preview-area">
+            <div class="vesak-card" id="vesakCard">
+                
+                <img src="vesak1.png" class="corner-lantern lantern-left" id="leftLantern" alt="Left Lantern">
+                <img src="vesak1.png" class="corner-lantern lantern-right" id="rightLantern" alt="Right Lantern">
+
+                <div class="card-title" id="cardTitle">ශ්‍රද්ධා බරිත වෙසක් මංගල්‍යයක් වේවා!</div>
+                
+                <div class="card-image-wrap">
+                    <img id="cardLanternImg" class="card-lantern-img" src="kudu1.png" alt="Vesak Graphics">
+                </div>
+                
+                <div class="card-footer-text">
+                    <div class="card-receiver" id="cardReceiver">ආදරණීය ඔබ වෙත,</div>
+                    <div class="card-sender" id="cardSender">සුබ පතන්නේ: ඔබේ නම</div>
+                </div>
+
+            </div>
+
+            <button class="download-btn" onclick="downloadCardAsImage()">
+                <i class="fa-solid fa-image"></i> පින්තූරය ලබාගන්න (Get Image)
+            </button>
+        </div>
+
+    </div>
+
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup-content">
+            <img src="" id="popupImg" class="popup-img" alt="Generated Card">
+            <p class="popup-msg">💡 <b>ජංගම දුරකථන සඳහා:</b> මෙම පින්තූරය මත තත්පර 2ක් තද කරගෙන සිට (Long Press) <b>"Save Image"</b> හෝ <b>"Download"</b> තෝරා ගැලරියට සුරැකීමට ගන්න.</p>
+            <button class="close-btn" onclick="closePopup()">වසා දමන්න (Close)</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedImageUrl = "kudu1.png";
+
+        function selectImage(element, imgUrl) {
+            const options = document.querySelectorAll('.image-option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            element.classList.add('selected');
+            element.querySelector('input[type="radio"]').checked = true;
+            
+            selectedImageUrl = imgUrl;
+            updateCard();
+        }
+
+        function updateCard() {
+            const receiver = document.getElementById('txtReceiver').value;
+            const name = document.getElementById('txtName').value;
+            const bg = document.getElementById('cmbBg').value;
+            const fontStyle = document.getElementById('cmbFont').value;
+            const wish = document.getElementById('cmbWishes').value;
+            const card = document.getElementById('vesakCard');
+
+            card.style.background = bg;
+            
+            const cardTitle = document.getElementById('cardTitle');
+            cardTitle.innerText = wish;
+            cardTitle.style.fontFamily = fontStyle;
+            
+            document.getElementById('cardLanternImg').src = selectedImageUrl;
+
+            // To (කා හටද) කොටස
+            const cardReceiver = document.getElementById('cardReceiver');
+            cardReceiver.style.fontFamily = fontStyle;
+            if(receiver.trim() !== "") {
+                cardReceiver.innerText = "ආදරණීය " + receiver + " වෙත,";
+            } else {
+                cardReceiver.innerText = "ආදරණීය ඔබ වෙත,";
+            }
+
+            // From (කා විසින්ද) කොටස
+            const cardSender = document.getElementById('cardSender');
+            cardSender.style.fontFamily = fontStyle;
+            if(name.trim() !== "") {
+                cardSender.innerText = "සුබ පතන්නේ: " + name;
+            } else {
+                cardSender.innerText = "සුබ පතන්නේ: ඔබේ නම";
+            }
+        }
+
+        function downloadCardAsImage() {
+            const card = document.getElementById('vesakCard');
+            const mainImg = document.getElementById('cardLanternImg');
+            const leftL = document.getElementById('leftLantern');
+            const rightL = document.getElementById('rightLantern');
+            
+            // 🛠️ html2canvas මඟින් Image එකක් generate කරන විට animation එක නිසා ඇද වීම වැළැක්වීමට තාවකාලිකව animation නවත්වනු ලැබේ.
+            mainImg.style.animation = 'none';
+            leftL.style.animation = 'none';
+            rightL.style.animation = 'none';
+            
+            // html2canvas වැඩ නිම කිරීමට මිලි තත්පර කිහිපයක් ලබා දීම
+            setTimeout(() => {
+                html2canvas(card, { 
+                    scale: 2,
+                    useCORS: true, 
+                    allowTaint: false,
+                    backgroundColor: null,
+                    logging: false
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    
+                    // Mobile Display
+                    document.getElementById('popupImg').src = imgData;
+                    document.getElementById('popupOverlay').style.display = 'flex';
+                    
+                    // PC Download trigger
+                    const link = document.createElement('a');
+                    link.href = imgData;
+                    link.download = 'Premium_Vesak_Card.png';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // 🛠️ Image එක සාදා නිම වූ පසු නැවත Animation සක්‍රීය කිරීම
+                    mainImg.style.animation = 'float 4s ease-in-out infinite';
+                    leftL.style.animation = 'swayLeft 4.5s ease-in-out infinite alternate';
+                    rightL.style.animation = 'swayRight 5s ease-in-out infinite alternate';
+                });
+            }, 50);
+        }
+
+        function closePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+        
+        // Initial setup execution
+        updateCard();
+    </script>
+
+</body>
+</html>
